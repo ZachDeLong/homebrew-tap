@@ -1,0 +1,37 @@
+name: Bump Nudge
+
+# Checks for a new Nudge release and points the cask at it. Runs on a
+# schedule so the Nudge repo needs no token to reach this one.
+on:
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update the cask if there's a newer release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          latest=$(gh api repos/ZachDeLong/nudge/releases/latest --jq .tag_name)
+          version=${latest#v}
+          current=$(sed -n 's/^  version "\(.*\)"$/\1/p' Casks/nudge.rb)
+          if [ "$version" = "$current" ]; then
+            echo "Cask is already at $current"
+            exit 0
+          fi
+          sha=$(curl -fsSL "https://github.com/ZachDeLong/nudge/releases/download/$latest/Nudge.app.zip.sha256" | cut -d' ' -f1)
+          echo "$sha" | grep -Eq '^[0-9a-f]{64}$' || { echo "::error::bad checksum for $latest"; exit 1; }
+          sed -i "s/^  version \".*\"$/  version \"$version\"/; s/^  sha256 \".*\"$/  sha256 \"$sha\"/" Casks/nudge.rb
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "nudge $version"
+          git push
