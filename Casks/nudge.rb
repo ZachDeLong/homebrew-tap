@@ -30,12 +30,9 @@ cask "nudge" do
 
   uninstall quit: "com.zachdelong.Nudge"
 
-  zap script: {
-        executable:   "#{appdir}/Nudge.app/Contents/Resources/setup/nudge-setup.sh",
-        args:         ["--remove"],
-        must_succeed: false,
-      },
-      trash:  "~/.config/nudge"
+  # Hooks can't be removed here: brew deletes the app, and the setup script
+  # inside it, before zap runs. The caveat asks for `nudge-setup --remove`.
+  zap trash: "~/.config/nudge"
 
   caveats <<~EOS
     Connect Nudge to Claude Code (and Codex, if you use it):

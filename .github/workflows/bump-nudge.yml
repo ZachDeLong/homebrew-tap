@@ -22,10 +22,13 @@ jobs:
         run: |
           set -euo pipefail
           latest=$(gh api repos/ZachDeLong/nudge/releases/latest --jq .tag_name)
+          # The tag goes into sed and the cask's Ruby: plain versions only.
+          echo "$latest" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+$' || { echo "::error::unexpected tag $latest"; exit 1; }
           version=${latest#v}
           current=$(sed -n 's/^  version "\(.*\)"$/\1/p' Casks/nudge.rb)
-          if [ "$version" = "$current" ]; then
-            echo "Cask is already at $current"
+          newest=$(printf '%s\n%s\n' "$current" "$version" | sort -V | tail -n 1)
+          if [ "$version" = "$current" ] || [ "$newest" != "$version" ]; then
+            echo "Cask is at $current; latest release is $version. Nothing to do."
             exit 0
           fi
           sha=$(curl -fsSL "https://github.com/ZachDeLong/nudge/releases/download/$latest/Nudge.app.zip.sha256" | cut -d' ' -f1)
