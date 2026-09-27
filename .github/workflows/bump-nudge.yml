@@ -25,7 +25,7 @@ jobs:
           # The tag goes into sed and the cask's Ruby: plain versions only.
           echo "$latest" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+$' || { echo "::error::unexpected tag $latest"; exit 1; }
           version=${latest#v}
-          current=$(sed -n 's/^  version "\(.*\)"$/\1/p' Casks/nudge.rb)
+          current=$(sed -n 's/^  version "\(.*\)"$/\1/p' Casks/nudge-app.rb)
           newest=$(printf '%s\n%s\n' "$current" "$version" | sort -V | tail -n 1)
           if [ "$version" = "$current" ] || [ "$newest" != "$version" ]; then
             echo "Cask is at $current; latest release is $version. Nothing to do."
@@ -33,7 +33,7 @@ jobs:
           fi
           sha=$(curl -fsSL "https://github.com/ZachDeLong/nudge/releases/download/$latest/Nudge.app.zip.sha256" | cut -d' ' -f1)
           echo "$sha" | grep -Eq '^[0-9a-f]{64}$' || { echo "::error::bad checksum for $latest"; exit 1; }
-          sed -i "s/^  version \".*\"$/  version \"$version\"/; s/^  sha256 \".*\"$/  sha256 \"$sha\"/" Casks/nudge.rb
+          sed -i "s/^  version \".*\"$/  version \"$version\"/; s/^  sha256 \".*\"$/  sha256 \"$sha\"/" Casks/nudge-app.rb
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -am "nudge $version"

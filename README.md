@@ -3,7 +3,7 @@
 Homebrew casks for [Nudge](https://github.com/ZachDeLong/nudge).
 
 ```sh
-brew install --cask zachdelong/tap/nudge
+brew install --cask zachdelong/tap/nudge-app
 nudge-setup
 ```
 

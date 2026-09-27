@@ -1,4 +1,4 @@
-cask "nudge" do
+cask "nudge-app" do
   version "1.4.4"
   sha256 "72880a3fb3555dd8b573d2608a17c26626db5cd852e8d96d9eeecda7d2cf3e0c"
 
