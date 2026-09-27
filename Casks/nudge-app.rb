@@ -1,6 +1,6 @@
 cask "nudge-app" do
-  version "1.5.0"
-  sha256 "2a81f81a70130e18bbd36098ce7e13ca3e61e62343d06583e0534e9d6a3af2aa"
+  version "1.5.1"
+  sha256 "8cc92aa85c5c55d69f4b6818931f2373838eac3192ee4aaae082d4289d07e342"
 
   url "https://github.com/ZachDeLong/nudge/releases/download/v#{version}/Nudge.app.zip"
   name "Nudge"
